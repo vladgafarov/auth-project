@@ -10,6 +10,7 @@ import { Prisma } from '@prisma/client'
 import { PrismaService } from 'src/prisma.service'
 import jwtConfig from '../config/jwt.config'
 import { HashingService } from '../hashing/hashing.service'
+import { ActiveUserData } from '../interfaces/active-user-data.interface'
 import { SignInDto } from './dto/sign-in.dto'
 
 @Injectable()
@@ -56,7 +57,7 @@ export class AuthenticationService {
 			{
 				sub: user.id,
 				email: user.email,
-			},
+			} as ActiveUserData,
 			{
 				audience: this.jwtConfiguration.audience,
 				issuer: this.jwtConfiguration.issuer,
