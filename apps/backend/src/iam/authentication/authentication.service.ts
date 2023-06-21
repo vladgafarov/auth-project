@@ -7,12 +7,17 @@ import {
 import { ConfigType } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Prisma, User } from '@prisma/client'
+import { randomUUID } from 'crypto'
 import { PrismaService } from 'src/prisma.service'
 import jwtConfig from '../config/jwt.config'
 import { HashingService } from '../hashing/hashing.service'
 import { ActiveUserData } from '../interfaces/active-user-data.interface'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
 import { SignInDto } from './dto/sign-in.dto'
+import {
+	InvalidatedRefreshTokenError,
+	RefreshTokenIdsStorage,
+} from './refresh-token-ids.storage'
 
 @Injectable()
 export class AuthenticationService {
@@ -21,7 +26,8 @@ export class AuthenticationService {
 		private readonly hashingService: HashingService,
 		private readonly jwtService: JwtService,
 		@Inject(jwtConfig.KEY)
-		private readonly jwtConfiguration: ConfigType<typeof jwtConfig>
+		private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
+		private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage
 	) {}
 
 	async signUp({ email, password }: Prisma.UserCreateInput) {
@@ -59,8 +65,8 @@ export class AuthenticationService {
 
 	async refreshTokens(refreshTokensDto: RefreshTokenDto) {
 		try {
-			const { sub } = await this.jwtService.verifyAsync<
-				Pick<ActiveUserData, 'sub'>
+			const { sub, refreshTokenId } = await this.jwtService.verifyAsync<
+				Pick<ActiveUserData, 'sub'> & { refreshTokenId: string }
 			>(refreshTokensDto.refreshToken, {
 				secret: this.jwtConfiguration.secret,
 				audience: this.jwtConfiguration.audience,
@@ -69,14 +75,28 @@ export class AuthenticationService {
 			const user = await this.prismaService.user.findUnique({
 				where: { id: sub },
 			})
+			const isValid = await this.refreshTokenIdsStorage.validate(
+				user.id,
+				refreshTokenId
+			)
+			if (isValid) {
+				await this.refreshTokenIdsStorage.invalidate(user.id)
+			} else {
+				throw new Error('Refresh token is invalid')
+			}
 
 			return this.generateTokens(user)
 		} catch (error) {
+			if (error instanceof InvalidatedRefreshTokenError) {
+				throw new UnauthorizedException('Access denied')
+			}
+
 			throw new UnauthorizedException()
 		}
 	}
 
 	async generateTokens(user: User) {
+		const refreshTokenId = randomUUID()
 		const [accessToken, refreshToken] = await Promise.all([
 			this.signToken<Partial<ActiveUserData>>(
 				user.id,
@@ -85,8 +105,11 @@ export class AuthenticationService {
 					email: user.email,
 				}
 			),
-			this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl),
+			this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
+				refreshTokenId,
+			}),
 		])
+		await this.refreshTokenIdsStorage.insert(user.id, refreshTokenId)
 
 		return {
 			accessToken,
