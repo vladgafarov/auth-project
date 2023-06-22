@@ -34,8 +34,18 @@ export class AuthenticationService {
 		try {
 			const user = await this.prismaService.user.create({
 				data: {
-					email: email,
+					email,
 					password: await this.hashingService.hash(password),
+					role: {
+						connectOrCreate: {
+							where: {
+								value: 'regular',
+							},
+							create: {
+								value: 'regular',
+							},
+						},
+					},
 				},
 			})
 
@@ -50,6 +60,13 @@ export class AuthenticationService {
 			where: {
 				email,
 			},
+			include: {
+				role: {
+					select: {
+						value: true,
+					},
+				},
+			},
 		})
 		if (!user) {
 			throw new UnauthorizedException('User or password is invalid')
@@ -60,7 +77,7 @@ export class AuthenticationService {
 			throw new UnauthorizedException('User or password is invalid')
 		}
 
-		return this.generateTokens(user)
+		return this.generateTokens({ ...user, role: user.role.value })
 	}
 
 	async refreshTokens(refreshTokensDto: RefreshTokenDto) {
@@ -74,6 +91,13 @@ export class AuthenticationService {
 			})
 			const user = await this.prismaService.user.findUnique({
 				where: { id: sub },
+				include: {
+					role: {
+						select: {
+							value: true,
+						},
+					},
+				},
 			})
 			const isValid = await this.refreshTokenIdsStorage.validate(
 				user.id,
@@ -85,7 +109,7 @@ export class AuthenticationService {
 				throw new Error('Refresh token is invalid')
 			}
 
-			return this.generateTokens(user)
+			return this.generateTokens({ ...user, role: user.role.value })
 		} catch (error) {
 			if (error instanceof InvalidatedRefreshTokenError) {
 				throw new UnauthorizedException('Access denied')
@@ -95,7 +119,7 @@ export class AuthenticationService {
 		}
 	}
 
-	async generateTokens(user: User) {
+	async generateTokens(user: User & { role: string }) {
 		const refreshTokenId = randomUUID()
 		const [accessToken, refreshToken] = await Promise.all([
 			this.signToken<Partial<ActiveUserData>>(
@@ -103,6 +127,7 @@ export class AuthenticationService {
 				this.jwtConfiguration.accessTokenTtl,
 				{
 					email: user.email,
+					role: user.role,
 				}
 			),
 			this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
