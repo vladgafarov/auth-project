@@ -8,11 +8,14 @@ import {
 	Delete,
 } from '@nestjs/common'
 import { ActiveUser } from 'src/iam/decorators/active-user.decorator'
+import { Auth } from 'src/iam/decorators/auth.decorator'
+import { AuthType } from 'src/iam/enums/auth-type.enum'
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface'
 import { CoffeesService } from './coffees.service'
 import { CreateCoffeeDto } from './dto/create-coffee.dto'
 import { UpdateCoffeeDto } from './dto/update-coffee.dto'
 
+@Auth(AuthType.ApiKey)
 @Controller('coffees')
 export class CoffeesController {
 	constructor(private readonly coffeesService: CoffeesService) {}

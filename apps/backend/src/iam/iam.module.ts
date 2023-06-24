@@ -12,6 +12,8 @@ import { AccessTokenGuard } from './authentication/guards/access-token.guard'
 import { AuthenticationGuard } from './authentication/guards/authentication.guard'
 import { RefreshTokenIdsStorage } from './authentication/refresh-token-ids.storage'
 import { RolesGuard } from './authorization/guards/roles.guard'
+import { ApiKeysService } from './authentication/api-keys.service'
+import { ApiKeyGuard } from './authentication/guards/api-key.guard'
 
 @Module({
 	imports: [
@@ -32,9 +34,11 @@ import { RolesGuard } from './authorization/guards/roles.guard'
 			useClass: RolesGuard,
 		},
 		AccessTokenGuard,
+		ApiKeyGuard,
 		AuthenticationService,
 		PrismaService,
 		RefreshTokenIdsStorage,
+		ApiKeysService,
 	],
 	controllers: [AuthenticationController],
 })

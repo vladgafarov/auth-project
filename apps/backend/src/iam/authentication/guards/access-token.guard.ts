@@ -40,7 +40,7 @@ export class AccessTokenGuard implements CanActivate {
 	private extractTokenFromHeader(request: Request): string | undefined {
 		// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 		//@ts-ignore
-		const [_, token] = request.headers.authorization?.split(' ') ?? []
-		return token
+		const [type, token] = request.headers.authorization?.split(' ') ?? []
+		return type === 'Bearer' ? token : undefined
 	}
 }
