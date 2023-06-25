@@ -18,6 +18,8 @@ model User {
   roleId Int?
   apiKeys ApiKey[]
   googleId String? @unique
+  isTfaEnabled Boolean @default(false)
+  tfaSecret String?
 }
 
 model Role {

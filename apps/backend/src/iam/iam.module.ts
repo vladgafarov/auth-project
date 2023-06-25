@@ -16,6 +16,7 @@ import { ApiKeysService } from './authentication/api-keys.service'
 import { ApiKeyGuard } from './authentication/guards/api-key.guard'
 import { GoogleAuthenticationService } from './authentication/social/google-authentication.service'
 import { GoogleAuthenticationController } from './authentication/social/google-authentication.controller'
+import { OtpAuthenticationService } from './authentication/otp-authentication.service';
 
 @Module({
 	imports: [
@@ -42,6 +43,7 @@ import { GoogleAuthenticationController } from './authentication/social/google-a
 		RefreshTokenIdsStorage,
 		ApiKeysService,
 		GoogleAuthenticationService,
+		OtpAuthenticationService,
 	],
 	controllers: [AuthenticationController, GoogleAuthenticationController],
 })

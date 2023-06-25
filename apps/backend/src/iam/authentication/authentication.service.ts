@@ -14,6 +14,7 @@ import { HashingService } from '../hashing/hashing.service'
 import { ActiveUserData } from '../interfaces/active-user-data.interface'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
 import { SignInDto } from './dto/sign-in.dto'
+import { OtpAuthenticationService } from './otp-authentication.service'
 import {
 	InvalidatedRefreshTokenError,
 	RefreshTokenIdsStorage,
@@ -27,7 +28,8 @@ export class AuthenticationService {
 		private readonly jwtService: JwtService,
 		@Inject(jwtConfig.KEY)
 		private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
-		private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage
+		private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
+		private readonly otpAuthService: OtpAuthenticationService
 	) {}
 
 	async signUp({ email, password }: Prisma.UserCreateInput) {
@@ -55,7 +57,7 @@ export class AuthenticationService {
 		}
 	}
 
-	async signIn({ password, email }: SignInDto) {
+	async signIn({ password, email, tfaCode }: SignInDto) {
 		const user = await this.prismaService.user.findUnique({
 			where: {
 				email,
@@ -71,6 +73,13 @@ export class AuthenticationService {
 		const isEqual = await this.hashingService.compare(password, user.password)
 		if (!isEqual) {
 			throw new UnauthorizedException('User or password is invalid')
+		}
+
+		if (user.isTfaEnabled) {
+			const isValid = this.otpAuthService.verifyCode(tfaCode, user.tfaSecret)
+			if (!isValid) {
+				throw new UnauthorizedException('Invalid 2FA code')
+			}
 		}
 
 		return this.generateTokens(user)
