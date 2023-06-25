@@ -61,11 +61,7 @@ export class AuthenticationService {
 				email,
 			},
 			include: {
-				role: {
-					select: {
-						value: true,
-					},
-				},
+				role: true,
 			},
 		})
 		if (!user) {
@@ -77,7 +73,7 @@ export class AuthenticationService {
 			throw new UnauthorizedException('User or password is invalid')
 		}
 
-		return this.generateTokens({ ...user, role: user.role.value })
+		return this.generateTokens(user)
 	}
 
 	async refreshTokens(refreshTokensDto: RefreshTokenDto) {
@@ -92,11 +88,7 @@ export class AuthenticationService {
 			const user = await this.prismaService.user.findUnique({
 				where: { id: sub },
 				include: {
-					role: {
-						select: {
-							value: true,
-						},
-					},
+					role: true,
 				},
 			})
 			const isValid = await this.refreshTokenIdsStorage.validate(
@@ -109,7 +101,7 @@ export class AuthenticationService {
 				throw new Error('Refresh token is invalid')
 			}
 
-			return this.generateTokens({ ...user, role: user.role.value })
+			return this.generateTokens(user)
 		} catch (error) {
 			if (error instanceof InvalidatedRefreshTokenError) {
 				throw new UnauthorizedException('Access denied')
@@ -119,7 +111,7 @@ export class AuthenticationService {
 		}
 	}
 
-	async generateTokens(user: User & { role: string }) {
+	async generateTokens(user: User) {
 		const refreshTokenId = randomUUID()
 		const [accessToken, refreshToken] = await Promise.all([
 			this.signToken<Partial<ActiveUserData>>(
@@ -127,7 +119,7 @@ export class AuthenticationService {
 				this.jwtConfiguration.accessTokenTtl,
 				{
 					email: user.email,
-					role: user.role,
+					roleId: user.roleId,
 				}
 			),
 			this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {

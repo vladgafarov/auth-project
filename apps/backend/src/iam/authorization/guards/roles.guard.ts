@@ -1,18 +1,24 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common'
+import {
+	CanActivate,
+	ExecutionContext,
+	Injectable,
+	UnauthorizedException,
+} from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { Observable } from 'rxjs'
 import { REQUEST_USER_KEY } from 'src/iam/iam.constants'
 import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface'
+import { PrismaService } from 'src/prisma.service'
 import { Role } from 'src/users/enums/role.enum'
 import { ROLES_KEY } from '../decorators/roles.decorator'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-	constructor(private readonly reflector: Reflector) {}
+	constructor(
+		private readonly reflector: Reflector,
+		private readonly prismaService: PrismaService
+	) {}
 
-	canActivate(
-		context: ExecutionContext
-	): boolean | Promise<boolean> | Observable<boolean> {
+	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const contextRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
 			context.getHandler(),
 			context.getClass(),
@@ -23,6 +29,38 @@ export class RolesGuard implements CanActivate {
 		const user: ActiveUserData = context.switchToHttp().getRequest()[
 			REQUEST_USER_KEY
 		]
-		return contextRoles.some(role => user.role === role)
+
+		for (let index = 0; index < contextRoles.length; index++) {
+			try {
+				const element = contextRoles[index]
+
+				const { value } = await this.prismaService.role.findUnique({
+					where: { id: user.roleId },
+				})
+
+				if (element === value) return true
+			} catch (error) {
+				throw new UnauthorizedException('Cannot check role')
+			}
+		}
+
+		return false
+
+		// TODO check async in some
+		//const res = contextRoles.some(async role => {
+		//try {
+		//const { value } = await this.prismaService.role.findUnique({
+		//where: { id: user.roleId },
+		//})
+		//console.log(value, role)
+		//console.log(value === role)
+		//return value === role
+		//} catch (error) {
+		//throw new UnauthorizedException('Cannot check role')
+		//}
+		//})
+		//console.log(res)
+
+		//return res
 	}
 }

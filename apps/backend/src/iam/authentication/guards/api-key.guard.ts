@@ -32,14 +32,8 @@ export class ApiKeyGuard implements CanActivate {
 				},
 				include: {
 					user: {
-						select: {
-							id: true,
-							email: true,
-							role: {
-								select: {
-									value: true,
-								},
-							},
+						include: {
+							role: true,
 						},
 					},
 				},
@@ -57,7 +51,7 @@ export class ApiKeyGuard implements CanActivate {
 			request[REQUEST_USER_KEY] = {
 				sub: apiKeyEntity.user.id,
 				email: apiKeyEntity.user.email,
-				role: apiKeyEntity.user.role.value,
+				roleId: apiKeyEntity.user.role.id,
 			} as ActiveUserData
 		} catch (error) {
 			throw new UnauthorizedException(error ? error.message : undefined)
