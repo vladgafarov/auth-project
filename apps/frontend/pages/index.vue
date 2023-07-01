@@ -23,8 +23,8 @@ useHead({
 </script>
 
 <template>
-	<div class="py-6 scroll-smooth">
-		<div class="hero min-h-screen bg-base-100">
+	<div>
+		<div :class="['hero min-h-screen', $style['hero-bg']]">
 			<div class="hero-content text-center">
 				<div class="max-w-md">
 					<h1 class="text-5xl font-bold">Best coffees</h1>
@@ -40,7 +40,7 @@ useHead({
 			</div>
 		</div>
 
-		<section id="best">
+		<section id="best" class="my-12 container">
 			<h2 class="font-semibold text-2xl">Best coffee</h2>
 
 			<div class="flex gap-10 justify-between flex-wrap lg:flex-nowrap mt-8">
@@ -59,6 +59,19 @@ useHead({
 					</div>
 				</div>
 			</div>
+
+			<div class="flex justify-center mt-8">
+				<NuxtLink to="/menu">
+					<button class="btn btn-accent">View all coffees</button>
+				</NuxtLink>
+			</div>
 		</section>
 	</div>
 </template>
+
+<style module>
+.hero-bg {
+	background-color: #ffdee9;
+	background-image: linear-gradient(0deg, #ffdee9 0%, #b5fffc 100%);
+}
+</style>
