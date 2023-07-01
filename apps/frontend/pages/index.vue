@@ -44,20 +44,14 @@ useHead({
 			<h2 class="font-semibold text-2xl">Best coffee</h2>
 
 			<div class="flex gap-10 justify-between flex-wrap lg:flex-nowrap mt-8">
-				<div
+				<CoffeeCard
 					v-for="coffee in coffeeList"
+					:name="coffee.name"
+					:price="coffee.price"
+					:id="coffee.id"
+					:key="coffee.id"
 					class="card card-compact w-96 bg-base-100 shadow-xl flex-grow"
-				>
-					<figure>
-						<img src="/coffee.jpg" :alt="coffee.name" />
-					</figure>
-					<div class="card-body">
-						<h2 class="card-title">{{ coffee.name }}</h2>
-						<div class="card-actions justify-end">
-							<button class="btn btn-primary">Buy Now</button>
-						</div>
-					</div>
-				</div>
+				/>
 			</div>
 
 			<div class="flex justify-center mt-8">
