@@ -24,7 +24,6 @@ import * as passport from 'passport'
 import { UserSerializer } from './authentication/serializers/user-serializer'
 import { Redis } from 'ioredis'
 import RedisStore from 'connect-redis'
-//import * as createRedisStore from 'connect-redis'
 
 @Module({
 	imports: [
@@ -63,7 +62,6 @@ import RedisStore from 'connect-redis'
 })
 export class IamModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {
-		//const RedisStore = createRedisStore(session)
 		consumer
 			.apply(
 				session({

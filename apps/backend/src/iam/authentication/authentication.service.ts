@@ -8,9 +8,14 @@ import { ConfigType } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import { Prisma, User } from '@prisma/client'
 import { randomUUID } from 'crypto'
+import { Response } from 'express'
 import { PrismaService } from 'src/prisma.service'
 import jwtConfig from '../config/jwt.config'
 import { HashingService } from '../hashing/hashing.service'
+import {
+	ACCESS_TOKEN_COOKIE_NAME,
+	REFRESH_TOKEN_COOKIE_NAME,
+} from '../iam.constants'
 import { ActiveUserData } from '../interfaces/active-user-data.interface'
 import { RefreshTokenDto } from './dto/refresh-token.dto'
 import { SignInDto } from './dto/sign-in.dto'
@@ -51,7 +56,7 @@ export class AuthenticationService {
 				},
 			})
 
-			return user
+			return this.generateTokens(user)
 		} catch (err) {
 			throw new BadRequestException('cannot signup')
 		}
@@ -141,6 +146,20 @@ export class AuthenticationService {
 			accessToken,
 			refreshToken,
 		}
+	}
+
+	responseJwtInCookie(
+		response: Response,
+		tokens: Awaited<ReturnType<AuthenticationService['generateTokens']>>
+	) {
+		response.cookie(ACCESS_TOKEN_COOKIE_NAME, tokens.accessToken, {
+			httpOnly: true,
+			maxAge: this.jwtConfiguration.accessTokenTtl,
+		})
+		response.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
+			httpOnly: true,
+			maxAge: this.jwtConfiguration.refreshTokenTtl,
+		})
 	}
 
 	private async signToken<T>(userId: number, expiresIn: number, payload?: T) {

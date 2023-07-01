@@ -1,19 +1,21 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	HttpCode,
 	HttpStatus,
 	Post,
+	Req,
 	Res,
 } from '@nestjs/common'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 import { toFileStream } from 'qrcode'
 import { ActiveUser } from '../decorators/active-user.decorator'
 import { Auth } from '../decorators/auth.decorator'
 import { AuthType } from '../enums/auth-type.enum'
+import { REFRESH_TOKEN_COOKIE_NAME } from '../iam.constants'
 import { ActiveUserData } from '../interfaces/active-user-data.interface'
 import { AuthenticationService } from './authentication.service'
-import { RefreshTokenDto } from './dto/refresh-token.dto'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
 import { OtpAuthenticationService } from './otp-authentication.service'
@@ -27,20 +29,43 @@ export class AuthenticationController {
 	) {}
 
 	@Post('sign-up')
-	async signUp(@Body() signUpDto: SignUpDto) {
-		return this.authService.signUp(signUpDto)
+	async signUp(
+		@Body() signUpDto: SignUpDto,
+		@Res({ passthrough: true }) response: Response
+	) {
+		const tokens = await this.authService.signUp(signUpDto)
+		this.authService.responseJwtInCookie(response, tokens)
+
+		return tokens
 	}
 
 	@HttpCode(HttpStatus.OK)
 	@Post('sign-in')
-	signIn(@Body() signInDto: SignInDto) {
-		return this.authService.signIn(signInDto)
+	async signIn(
+		@Res({ passthrough: true }) response: Response,
+		@Body() signInDto: SignInDto
+	) {
+		const tokens = await this.authService.signIn(signInDto)
+		this.authService.responseJwtInCookie(response, tokens)
+
+		return tokens
 	}
 
 	@HttpCode(HttpStatus.OK)
 	@Post('refresh-tokens')
-	refreshTokens(@Body() refreshTokensDto: RefreshTokenDto) {
-		return this.authService.refreshTokens(refreshTokensDto)
+	async refreshTokens(
+		@Req() request: Request,
+		@Res({ passthrough: true }) response: Response
+	) {
+		const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE_NAME]
+		if (!refreshToken) {
+			throw new BadRequestException('no refresh token was provided')
+		}
+
+		const tokens = await this.authService.refreshTokens({ refreshToken })
+		this.authService.responseJwtInCookie(response, tokens)
+
+		return tokens
 	}
 
 	@Auth(AuthType.Bearer)
