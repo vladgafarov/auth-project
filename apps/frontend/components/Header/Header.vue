@@ -15,7 +15,10 @@ function toggleIsLoggedIn() {
 		</VAppBarTitle>
 
 		<template v-slot:append>
-			<NuxtLink to="/menu">Menu</NuxtLink>
+			<div class="flex gap-4">
+				<NuxtLink to="/menu">Menu</NuxtLink>
+				<NuxtLink to="/login">Login</NuxtLink>
+			</div>
 		</template>
 	</VAppBar>
 </template>
