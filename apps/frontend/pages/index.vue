@@ -24,8 +24,13 @@ useHead({
 
 <template>
 	<div>
-		<div :class="['hero min-h-screen', $style['hero-bg']]">
-			<div class="hero-content text-center">
+		<div
+			:class="[
+				'min-h-screen grid grid-cols-1 grid-rows-1 place-items-center',
+				$style['hero-bg'],
+			]"
+		>
+			<div class="text-center">
 				<div class="max-w-md">
 					<h1 class="text-5xl font-bold">Best coffees</h1>
 					<p class="py-6">
@@ -34,7 +39,7 @@ useHead({
 						aut repudiandae et a id nisi.
 					</p>
 					<a href="#best">
-						<button class="btn btn-primary">See menu</button>
+						<VBtn>See menu</VBtn>
 					</a>
 				</div>
 			</div>
@@ -50,13 +55,13 @@ useHead({
 					:price="coffee.price"
 					:id="coffee.id"
 					:key="coffee.id"
-					class="card card-compact w-96 bg-base-100 shadow-xl flex-grow"
+					class="flex-1 min-w-min"
 				/>
 			</div>
 
 			<div class="flex justify-center mt-8">
 				<NuxtLink to="/menu">
-					<button class="btn btn-accent">View all coffees</button>
+					<VBtn>View all coffees</VBtn>
 				</NuxtLink>
 			</div>
 		</section>

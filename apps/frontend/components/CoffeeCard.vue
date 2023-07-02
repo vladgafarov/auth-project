@@ -3,17 +3,20 @@ const props = defineProps<{ name: string; price: number; id: number }>()
 </script>
 
 <template>
-	<div class="card card-compact w-96 bg-base-100 shadow-xl flex-grow">
-		<figure>
-			<img src="/coffee.jpg" :alt="props.name" />
-		</figure>
-		<div class="card-body">
+	<VCard>
+		<VImg
+			src="/coffee.jpg"
+			:alt="props.name"
+			height="200px"
+			cover
+			class="align-end text-white"
+		>
 			<NuxtLink :to="`/menu/${props.id}`">
-				<h2 class="card-title">{{ props.name }}</h2>
+				<VCardTitle>{{ props.name }}</VCardTitle>
 			</NuxtLink>
-			<div class="card-actions justify-end">
-				<button class="btn btn-primary">Buy Now</button>
-			</div>
-		</div>
-	</div>
+		</VImg>
+		<VCardActions class="card-actions justify-end">
+			<VBtn>Buy Now</VBtn>
+		</VCardActions>
+	</VCard>
 </template>

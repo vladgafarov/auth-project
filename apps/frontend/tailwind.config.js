@@ -5,8 +5,4 @@ module.exports = {
 			padding: '2rem',
 		},
 	},
-	plugins: [require('daisyui')],
-	daisyui: {
-		themes: ['cupcake'],
-	},
 }

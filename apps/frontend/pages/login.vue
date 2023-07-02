@@ -12,38 +12,25 @@ definePageMeta({
 
 <template>
 	<div class="grid grid-cols-1 grid-rows-1 place-items-center h-full">
-		<div class="max-w-lg mx-auto bg-slate-200 p-6 rounded-xl shadow">
+		<VSheet elevation="6" class="w-1/3 mx-auto bg-slate-200 p-6 rounded-xl">
 			<NuxtLink to="/">
-				<Icon name="tabler:chevron-left" />
-				Back home</NuxtLink
-			>
+				<VBtn variant="text">
+					<VIcon icon="mdi-chevron-left" start />
+					Back home
+				</VBtn>
+			</NuxtLink>
 
-			<form class="mt-3">
-				<label class="label" for="email">
-					<span class="label-text">Email</span>
-				</label>
-				<input
-					class="input input-bordered input-primary"
-					name="email"
-					id="email"
-					type="text"
-					v-model="email"
-					required
-				/>
-
-				<label class="label" for="password">
-					<span class="label-text">Password</span>
-				</label>
-				<input
-					class="input input-bordered input-primary"
+			<VForm class="mt-8">
+				<VTextField name="email" label="Email" v-model="email" />
+				<VTextField
 					name="password"
-					id="password"
+					label="Password"
 					type="password"
 					v-model="password"
-					required
 				/>
-				<button class="btn btn-primary block w-full mt-5">Login</button>
-			</form>
-		</div>
+
+				<VBtn color="teal" block>Login</VBtn>
+			</VForm>
+		</VSheet>
 	</div>
 </template>
