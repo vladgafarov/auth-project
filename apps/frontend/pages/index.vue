@@ -1,4 +1,6 @@
 <script setup lang="ts">
+// const { data } = useApiFetch(CoffeesService.getAll().url)
+
 const coffeeList = [
 	{
 		id: 1,

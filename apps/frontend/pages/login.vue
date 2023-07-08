@@ -2,6 +2,9 @@
 const email = ref('')
 const password = ref('')
 
+const { data, error } = useApiFetch('/coffees')
+console.log(data.value)
+
 useHead({
 	title: 'Login',
 })

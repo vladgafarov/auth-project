@@ -18,7 +18,7 @@ import { CreateCoffeeDto } from './dto/create-coffee.dto'
 import { UpdateCoffeeDto } from './dto/update-coffee.dto'
 
 //@Roles(Role.Admin)
-@Auth(AuthType.ApiKey, AuthType.Bearer)
+@Auth(AuthType.None)
 @Controller('coffees')
 export class CoffeesController {
 	constructor(private readonly coffeesService: CoffeesService) {}
