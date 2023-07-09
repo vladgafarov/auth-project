@@ -17,6 +17,7 @@ function toggleIsLoggedIn() {
 		<template v-slot:append>
 			<div class="flex gap-4">
 				<NuxtLink to="/menu">Menu</NuxtLink>
+				<NuxtLink to="/profile">Profile</NuxtLink>
 				<NuxtLink to="/login">Login</NuxtLink>
 			</div>
 		</template>
