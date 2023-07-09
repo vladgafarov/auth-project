@@ -154,12 +154,17 @@ export class AuthenticationService {
 	) {
 		response.cookie(ACCESS_TOKEN_COOKIE_NAME, tokens.accessToken, {
 			httpOnly: true,
-			maxAge: this.jwtConfiguration.accessTokenTtl,
+			maxAge: this.jwtConfiguration.accessTokenTtl * 1000,
 		})
 		response.cookie(REFRESH_TOKEN_COOKIE_NAME, tokens.refreshToken, {
 			httpOnly: true,
-			maxAge: this.jwtConfiguration.refreshTokenTtl,
+			maxAge: this.jwtConfiguration.refreshTokenTtl * 1000,
 		})
+	}
+
+	clearJwtInCookie(response: Response) {
+		response.clearCookie(ACCESS_TOKEN_COOKIE_NAME)
+		response.clearCookie(REFRESH_TOKEN_COOKIE_NAME)
 	}
 
 	private async signToken<T>(userId: number, expiresIn: number, payload?: T) {

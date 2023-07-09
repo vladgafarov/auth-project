@@ -51,6 +51,7 @@ export class AuthenticationController {
 		return tokens
 	}
 
+	@Auth(AuthType.Bearer)
 	@HttpCode(HttpStatus.OK)
 	@Post('refresh-tokens')
 	async refreshTokens(
@@ -81,5 +82,12 @@ export class AuthenticationController {
 		await this.otpAuthService.enableTfaForUser(user.email, secret)
 		response.type('png')
 		return toFileStream(response, uri)
+	}
+
+	@Auth(AuthType.Bearer)
+	@Post('sign-out')
+	@HttpCode(HttpStatus.OK)
+	async signOut(@Res({ passthrough: true }) response: Response) {
+		this.authService.clearJwtInCookie(response)
 	}
 }

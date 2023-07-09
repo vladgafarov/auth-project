@@ -8,7 +8,11 @@ import {
 import { ConfigType } from '@nestjs/config'
 import { JwtService } from '@nestjs/jwt'
 import jwtConfig from 'src/iam/config/jwt.config'
-import { REQUEST_USER_KEY } from 'src/iam/iam.constants'
+import {
+	ACCESS_TOKEN_COOKIE_NAME,
+	REFRESH_TOKEN_COOKIE_NAME,
+	REQUEST_USER_KEY,
+} from 'src/iam/iam.constants'
 
 @Injectable()
 export class AccessTokenGuard implements CanActivate {
@@ -20,7 +24,11 @@ export class AccessTokenGuard implements CanActivate {
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const request = context.switchToHttp().getRequest()
-		const token = this.extractTokenFromHeader(request)
+
+		const token =
+			this.extractTokenFromCookie(request) ||
+			this.extractTokenFromHeader(request)
+
 		if (!token) {
 			throw new UnauthorizedException()
 		}
@@ -42,5 +50,14 @@ export class AccessTokenGuard implements CanActivate {
 		//@ts-ignore
 		const [type, token] = request.headers.authorization?.split(' ') ?? []
 		return type === 'Bearer' ? token : undefined
+	}
+
+	private extractTokenFromCookie(request) {
+		if (!request?.cookies) return undefined
+
+		return (
+			request.cookies[ACCESS_TOKEN_COOKIE_NAME] ||
+			request.cookies[REFRESH_TOKEN_COOKIE_NAME]
+		)
 	}
 }
