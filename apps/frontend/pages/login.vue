@@ -1,28 +1,5 @@
 <script setup lang="ts">
-import { toTypedSchema } from '@vee-validate/zod'
-import { useForm, useField } from 'vee-validate'
-import { z } from 'zod'
-
-const schema = toTypedSchema(
-	z.object({
-		email: z.string().email(),
-		password: z.string().min(6),
-	})
-)
-const { handleSubmit } = useForm({
-	validationSchema: schema,
-})
-const email = useField<string>('email')
-const password = useField<string>('password')
-
-const submit = handleSubmit(() => {
-	execute()
-})
-
-const { execute, status, error } = await AuthService.signIn({
-	email: email.value,
-	password: password.value,
-})
+const activeForm = ref<'login' | 'signup'>('login')
 
 useHead({
 	title: 'Login',
@@ -37,7 +14,6 @@ definePageMeta({
 		<VCard
 			elevation="6"
 			class="w-full lg:w-1/3 mx-auto bg-slate-200 p-6 rounded-xl"
-			:loading="status === 'pending'"
 		>
 			<VCardItem>
 				<VCardText>
@@ -48,36 +24,23 @@ definePageMeta({
 						</VBtn>
 					</NuxtLink>
 
-					<VAlert
-						class="mt-4"
-						@click:close="clearError()"
-						type="error"
-						v-if="error"
-						>{{ error }}</VAlert
-					>
-					<form class="mt-8 flex flex-col gap-6" @submit.prevent="submit">
-						<VTextField
-							v-model="email.value.value"
-							:error-messages="email.errorMessage.value"
-							name="email"
-							label="Email"
-						/>
-						<VTextField
-							v-model="password.value.value"
-							:error-messages="password.errorMessage.value"
-							name="password"
-							label="Password"
-							type="password"
-						/>
+					<LoginForm v-if="activeForm === 'login'" />
+					<SignupForm v-else />
 
-						<VBtn
-							color="teal"
-							block
-							type="submit"
-							:disabled="status === 'pending'"
-							>Login</VBtn
-						>
-					</form>
+					<p
+						v-if="activeForm === 'login'"
+						@click="activeForm = 'signup'"
+						class="text-slate-500 mt-3 text-center cursor-pointer"
+					>
+						Already have an account?
+					</p>
+					<p
+						v-else-if="activeForm === 'signup'"
+						@click="activeForm = 'login'"
+						class="text-slate-500 mt-3 text-center cursor-pointer"
+					>
+						I don't have an account
+					</p>
 				</VCardText>
 			</VCardItem>
 		</VCard>
