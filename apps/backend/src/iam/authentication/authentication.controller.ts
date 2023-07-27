@@ -51,7 +51,6 @@ export class AuthenticationController {
 		return tokens
 	}
 
-	@Auth(AuthType.Bearer)
 	@HttpCode(HttpStatus.OK)
 	@Post('refresh-tokens')
 	async refreshTokens(

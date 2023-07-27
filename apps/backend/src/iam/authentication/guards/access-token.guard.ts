@@ -10,7 +10,6 @@ import { JwtService } from '@nestjs/jwt'
 import jwtConfig from 'src/iam/config/jwt.config'
 import {
 	ACCESS_TOKEN_COOKIE_NAME,
-	REFRESH_TOKEN_COOKIE_NAME,
 	REQUEST_USER_KEY,
 } from 'src/iam/iam.constants'
 
@@ -55,9 +54,6 @@ export class AccessTokenGuard implements CanActivate {
 	private extractTokenFromCookie(request) {
 		if (!request?.cookies) return undefined
 
-		return (
-			request.cookies[ACCESS_TOKEN_COOKIE_NAME] ||
-			request.cookies[REFRESH_TOKEN_COOKIE_NAME]
-		)
+		return request.cookies[ACCESS_TOKEN_COOKIE_NAME]
 	}
 }

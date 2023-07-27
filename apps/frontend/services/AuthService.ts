@@ -44,4 +44,26 @@ export class AuthService extends ApiService {
 			watch: false,
 		})
 	}
+
+	static async signOut() {
+		return useApiFetch(this.url('/sign-out'), {
+			method: 'POST',
+			immediate: false,
+			watch: false,
+		})
+	}
+
+	static async refreshTokens() {
+		const config = useRuntimeConfig()
+
+		return $fetch<{
+			accessToken: string
+			refreshToken: string
+		}>(this.url('/refresh-tokens'), {
+			method: 'POST',
+			retry: 3,
+			baseURL: config.public.baseURL,
+			credentials: 'include',
+		})
+	}
 }
