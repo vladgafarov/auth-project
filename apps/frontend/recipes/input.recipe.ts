@@ -8,9 +8,9 @@ export const inputRecipe = defineRecipe({
 	},
 	variants: {
 		size: {
-			sm: { px: '4', py: '2', fontSize: '14px' },
-			md: { px: '5', py: '2', fontSize: '16px' },
-			lg: { padding: '8', fontSize: '40px' },
+			sm: { px: '4', py: '2' },
+			md: { px: '5', py: '2' },
+			lg: { px: '6', py: '3' },
 		},
 		disabled: {
 			true: {
