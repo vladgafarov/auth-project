@@ -1,4 +1,8 @@
 <script setup lang="ts">
+import { css } from 'styled-system/css'
+import { flex } from 'styled-system/patterns'
+import { button } from 'styled-system/recipes'
+
 // const { data } = useApiFetch(CoffeesService.getAll().url)
 
 const coffeeList = [
@@ -28,22 +32,34 @@ useHead({
 	<div>
 		<div
 			:class="[
-				'min-h-screen grid grid-cols-1 grid-rows-1 place-items-center',
 				$style['hero-bg'],
+				css({ minH: 'screen', textAlign: 'center' }),
+				flex({ alignItems: 'center', justifyContent: 'center' }),
 			]"
 		>
-			<div class="text-center">
-				<div class="max-w-md">
-					<h1 class="text-5xl font-bold">Best coffees</h1>
-					<p class="py-6">
-						Provident cupiditate voluptatem et in. Quaerat fugiat ut
-						assumenda excepturi exercitationem quasi. In deleniti eaque
-						aut repudiandae et a id nisi.
-					</p>
-					<a href="#best">
-						<VBtn>See menu</VBtn>
-					</a>
-				</div>
+			<div :class="css({ maxW: 'md' })">
+				<h1
+					:class="
+						css({
+							fontSize: '5xl',
+							lineHeight: '5xl',
+							fontWeight: 'bold',
+						})
+					"
+				>
+					Best coffees
+				</h1>
+				<p :class="css({ pt: '6', pb: '6' })">
+					Provident cupiditate voluptatem et in. Quaerat fugiat ut
+					assumenda excepturi exercitationem quasi. In deleniti eaque aut
+					repudiandae et a id nisi.
+				</p>
+				<a
+					href="#best"
+					:class="flex({ justifyContent: 'center', alignItems: 'center' })"
+				>
+					<button :class="button()">See menu</button>
+				</a>
 			</div>
 		</div>
 

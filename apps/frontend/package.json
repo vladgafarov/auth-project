@@ -2,6 +2,7 @@
 	"name": "frontend",
 	"private": true,
 	"scripts": {
+		"prepare": "panda codegen",
 		"build": "nuxt build",
 		"dev": "nuxt dev",
 		"generate": "nuxt generate",
@@ -12,6 +13,7 @@
 		"@invictus.codes/nuxt-vuetify": "^0.2.20",
 		"@nuxt/devtools": "latest",
 		"@nuxtjs/tailwindcss": "^6.8.0",
+		"@pandacss/dev": "^0.8.0",
 		"@types/node": "^18",
 		"nuxt": "^3.6.1",
 		"nuxt-icon": "^0.4.2"
