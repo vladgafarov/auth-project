@@ -4,8 +4,7 @@ export const buttonRecipe = defineRecipe({
 	name: 'button',
 	description: 'The styles for the Button component',
 	base: {
-		display: 'flex',
-		borderRadius: '8px',
+		borderRadius: 'md',
 		cursor: 'pointer',
 	},
 	variants: {
@@ -14,13 +13,27 @@ export const buttonRecipe = defineRecipe({
 				bg: 'green.400',
 				color: 'white',
 			},
-			funky: { bg: 'red.200', color: 'white' },
-			edgy: { border: '1px solid {colors.red.500}' },
+			outline: {
+				bg: 'white',
+				borderWidth: '1px',
+				borderColor: 'green.400',
+				color: 'green.400',
+			},
+			ghost: {
+				bg: 'transparent',
+				px: 0,
+				py: 0,
+			},
 		},
 		size: {
-			sm: { padding: '4', fontSize: '12px' },
-			md: { px: '5', py: '2' },
+			sm: { px: '4', py: '2', fontSize: '14px' },
+			md: { px: '5', py: '2', fontSize: '16px' },
 			lg: { padding: '8', fontSize: '40px' },
+		},
+		disabled: {
+			true: {
+				cursor: 'not-allowed',
+			},
 		},
 	},
 	defaultVariants: {

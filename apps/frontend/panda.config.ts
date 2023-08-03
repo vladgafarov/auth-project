@@ -1,5 +1,6 @@
 import { defineConfig } from '@pandacss/dev'
 import { buttonRecipe } from 'recipes/button.recipe'
+import { inputRecipe } from 'recipes/input.recipe'
 
 export default defineConfig({
 	// Whether to use css reset
@@ -9,7 +10,7 @@ export default defineConfig({
 	include: [
 		'./components/**/*.{js,jsx,ts,tsx,vue}',
 		'./pages/**/*.{js,jsx,ts,tsx,vue}',
-		'./recipes/**/*.{ts}'
+		'./recipes/**/*.{ts}',
 	],
 
 	// Files to exclude
@@ -20,6 +21,7 @@ export default defineConfig({
 		extend: {
 			recipes: {
 				button: buttonRecipe,
+				input: inputRecipe,
 			},
 		},
 	},

@@ -54,12 +54,16 @@ useHead({
 					assumenda excepturi exercitationem quasi. In deleniti eaque aut
 					repudiandae et a id nisi.
 				</p>
-				<a
-					href="#best"
-					:class="flex({ justifyContent: 'center', alignItems: 'center' })"
+
+				<div
+					:class="[
+						flex({ justifyContent: 'center', alignItems: 'center' }),
+					]"
 				>
-					<button :class="button()">See menu</button>
-				</a>
+					<a href="#best">
+						<button :class="button()">See menu</button>
+					</a>
+				</div>
 			</div>
 		</div>
 

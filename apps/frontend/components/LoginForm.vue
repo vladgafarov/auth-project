@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod'
+import { css } from 'styled-system/css'
+import { flex } from 'styled-system/patterns'
+import { button, input } from 'styled-system/recipes'
 import { useForm, useField } from 'vee-validate'
 import { z } from 'zod'
 
@@ -26,31 +29,27 @@ const { execute, status, error } = await AuthService.signIn({
 </script>
 
 <template>
-	<VAlert
-		class="mt-4"
-		type="error"
-		v-if="error"
-		border="start"
-		variant="outlined"
-		>{{ error }}</VAlert
+	<h2 :class="css({ fontWeight: 'semibold', fontSize: 'lg' })">Login</h2>
+	<form
+		:class="flex({ direction: 'column', gap: '3' })"
+		@submit.prevent="submit"
 	>
-	<form class="mt-8 flex flex-col gap-3" @submit.prevent="submit">
-		<VTextField
+		<input
 			v-model="email.value.value"
-			:error-messages="email.errorMessage.value"
 			name="email"
 			label="Email"
+			:class="input()"
+			required
 		/>
-		<VTextField
+		<input
 			v-model="password.value.value"
-			:error-messages="password.errorMessage.value"
 			name="password"
 			label="Password"
+			:class="input()"
 			type="password"
+			required
 		/>
 
-		<VBtn color="teal" block type="submit" :loading="status === 'pending'"
-			>Login</VBtn
-		>
+		<button type="submit" :class="button()">Login</button>
 	</form>
 </template>
