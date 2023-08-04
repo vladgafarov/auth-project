@@ -30,21 +30,25 @@ const { execute, status, error } = await AuthService.signIn({
 
 <template>
 	<h2 :class="css({ fontWeight: 'semibold', fontSize: 'lg' })">Login</h2>
-	{{ email.value }}
 	<form
 		:class="flex({ direction: 'column', gap: '3' })"
 		@submit.prevent="submit"
 	>
-		<label>
-			Email
-			<Input v-model="email.value.value" name="email" required />
-		</label>
-		<input
+		<Input
+			v-model="email.value.value"
+			label="Email"
+			name="email"
+			type="email"
+			autocomplete="username"
+			required
+		/>
+
+		<Input
 			v-model="password.value.value"
-			name="password"
 			label="Password"
-			:class="input()"
+			name="password"
 			type="password"
+			autocomplete="current-password"
 			required
 		/>
 
