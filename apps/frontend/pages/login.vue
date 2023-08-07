@@ -19,6 +19,7 @@ definePageMeta({
 			css({
 				h: 'full',
 				placeItems: 'center',
+				p: '10',
 			}),
 			grid({ columns: 1 }),
 		]"
@@ -27,6 +28,7 @@ definePageMeta({
 			:class="
 				css({
 					w: 'full',
+					md: { w: '2/3' },
 					lg: { w: '1/3' },
 					ml: 'auto',
 					mr: 'auto',
@@ -51,14 +53,26 @@ definePageMeta({
 				<p
 					v-if="activeForm === 'login'"
 					@click="activeForm = 'signup'"
-					class="text-slate-500 mt-3 text-center cursor-pointer"
+					:class="
+						css({
+							color: 'slate.500',
+							textAlign: 'center',
+							cursor: 'pointer',
+						})
+					"
 				>
 					Already have an account?
 				</p>
 				<p
 					v-else-if="activeForm === 'signup'"
 					@click="activeForm = 'login'"
-					class="text-slate-500 mt-3 text-center cursor-pointer"
+					:class="
+						css({
+							color: 'slate.500',
+							textAlign: 'center',
+							cursor: 'pointer',
+						})
+					"
 				>
 					I don't have an account
 				</p>

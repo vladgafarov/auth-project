@@ -11,7 +11,7 @@ type Props = {
 
 export default function Input(
 	props: InputVariantProps & Omit<Partial<HTMLInputElement>, 'size'> & Props,
-	context: SetupContext
+	context: SetupContext,
 ) {
 	const { disabled, size, error, label, errorMessage, modelValue, ...rest } =
 		props
@@ -37,7 +37,7 @@ export default function Input(
 						css({
 							w: 'full',
 							pr: context.slots.rightSection ? '11' : undefined,
-						})
+						}),
 					)}
 					id={rest.name}
 					disabled={Boolean(disabled)}
@@ -60,7 +60,7 @@ export default function Input(
 								borderWidth: '1px',
 								borderColor: 'red.500',
 							}),
-							flex({ justifyContent: 'center', alignItems: 'center' })
+							flex({ justifyContent: 'center', alignItems: 'center' }),
 						)}
 					>
 						{context.slots.rightSection()}

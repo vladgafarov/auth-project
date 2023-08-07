@@ -23,6 +23,7 @@ function toggleIsLoggedIn() {
 				bg: 'white',
 				borderRadius: '8px',
 				shadow: 'sm',
+				zIndex: 1000,
 			}),
 		]"
 	>

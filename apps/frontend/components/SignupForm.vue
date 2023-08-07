@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { toTypedSchema } from '@vee-validate/zod'
+import { css } from 'styled-system/css'
+import { flex } from 'styled-system/patterns'
+import { button } from 'styled-system/recipes'
 import { useForm, useField } from 'vee-validate'
 import { z } from 'zod'
 
@@ -13,7 +16,7 @@ const schema = toTypedSchema(
 		.refine(data => data.password === data.confirmPassword, {
 			message: "Passwords don't match",
 			path: ['confirmPassword'],
-		})
+		}),
 )
 const { handleSubmit } = useForm({
 	validationSchema: schema,
@@ -33,38 +36,52 @@ const { execute, status, error } = await AuthService.signUp({
 </script>
 
 <template>
-	<VAlert
-		class="mt-4"
-		type="error"
-		v-if="error"
-		border="start"
-		variant="outlined"
-		>{{ error }}</VAlert
+	<h2 :class="css({ fontWeight: 'semibold', fontSize: 'lg' })">Sign up</h2>
+
+	<p :class="css({ color: 'red.400' })" v-if="error">{{ error }}</p>
+
+	<form
+		:class="flex({ direction: 'column', gap: '3' })"
+		@submit.prevent="submit"
 	>
-	<form class="mt-8 flex flex-col gap-3" @submit.prevent="submit">
-		<VTextField
+		<Input
 			v-model="email.value.value"
-			:error-messages="email.errorMessage.value"
-			name="email"
 			label="Email"
+			name="email"
+			type="email"
+			autocomplete="username"
+			required
+			:error="Boolean(email.errorMessage.value)"
+			:errorMessage="email.errorMessage.value"
 		/>
-		<VTextField
+
+		<Input
 			v-model="password.value.value"
-			:error-messages="password.errorMessage.value"
-			name="password"
 			label="Password"
+			name="password"
 			type="password"
+			autocomplete="current-password"
+			required
+			:error="Boolean(password.errorMessage.value)"
+			:errorMessage="password.errorMessage.value"
 		/>
-		<VTextField
+
+		<Input
 			v-model="confirmPassword.value.value"
-			:error-messages="confirmPassword.errorMessage.value"
 			name="confirmPassword"
 			label="Repeat Password"
 			type="password"
+			required
+			:error="Boolean(confirmPassword.errorMessage.value)"
+			:errorMessage="confirmPassword.errorMessage.value"
 		/>
 
-		<VBtn color="teal" block type="submit" :loading="status === 'pending'"
-			>Sign up</VBtn
+		<button
+			type="submit"
+			:disabled="status === 'pending'"
+			:class="[css({ mt: '3' }), button({ disabled: status === 'pending' })]"
 		>
+			Sign up
+		</button>
 	</form>
 </template>

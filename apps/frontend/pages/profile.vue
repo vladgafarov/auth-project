@@ -1,5 +1,8 @@
 <script setup lang="ts">
-const { data } = await ProfileService.getProfile()
+import { container } from 'styled-system/patterns'
+import { button } from 'styled-system/recipes'
+
+const { data, refresh } = await ProfileService.getProfile()
 
 useHead({
 	title: 'Profile',
@@ -7,5 +10,9 @@ useHead({
 </script>
 
 <template>
-	<h1>Profile</h1>
+	<div :class="container({ pt: '20' })">
+		<h1>Profile</h1>
+
+		<button @click="refresh()" :class="button()">refresh</button>
+	</div>
 </template>

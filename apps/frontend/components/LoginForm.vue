@@ -15,6 +15,7 @@ const schema = toTypedSchema(
 const { handleSubmit } = useForm({
 	validationSchema: schema,
 })
+
 const email = useField<string>('email')
 const password = useField<string>('password')
 
@@ -30,6 +31,9 @@ const { execute, status, error } = await AuthService.signIn({
 
 <template>
 	<h2 :class="css({ fontWeight: 'semibold', fontSize: 'lg' })">Login</h2>
+
+	<p :class="css({ color: 'red.400' })" v-if="error">{{ error }}</p>
+
 	<form
 		:class="flex({ direction: 'column', gap: '3' })"
 		@submit.prevent="submit"
@@ -41,6 +45,8 @@ const { execute, status, error } = await AuthService.signIn({
 			type="email"
 			autocomplete="username"
 			required
+			:error="Boolean(email.errorMessage.value)"
+			:errorMessage="email.errorMessage.value"
 		/>
 
 		<Input
@@ -50,8 +56,16 @@ const { execute, status, error } = await AuthService.signIn({
 			type="password"
 			autocomplete="current-password"
 			required
+			:error="Boolean(password.errorMessage.value)"
+			:errorMessage="password.errorMessage.value"
 		/>
 
-		<button type="submit" :class="[css({ mt: '3' }), button()]">Login</button>
+		<button
+			type="submit"
+			:disabled="status === 'pending'"
+			:class="[css({ mt: '3' }), button({ disabled: status === 'pending' })]"
+		>
+			Login
+		</button>
 	</form>
 </template>
