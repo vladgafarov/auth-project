@@ -5,17 +5,17 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { REQUEST_USER_KEY } from 'src/iam/iam.constants'
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface'
-import { PrismaService } from 'src/prisma.service'
-import { Role } from 'src/users/enums/role.enum'
+import { REQUEST_USER_KEY } from '../../iam.constants'
+import { ActiveUserData } from '../../interfaces/active-user-data.interface'
+import { PrismaService } from '../../../prisma.service'
+import { Role } from '../../../users/enums/role.enum'
 import { ROLES_KEY } from '../decorators/roles.decorator'
 
 @Injectable()
 export class RolesGuard implements CanActivate {
 	constructor(
 		private readonly reflector: Reflector,
-		private readonly prismaService: PrismaService
+		private readonly prismaService: PrismaService,
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {

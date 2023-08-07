@@ -3,7 +3,7 @@ import { HashingService } from './hashing/hashing.service'
 import { BcryptService } from './hashing/bcrypt.service'
 import { AuthenticationController } from './authentication/authentication.controller'
 import { AuthenticationService } from './authentication/authentication.service'
-import { PrismaService } from 'src/prisma.service'
+import { PrismaService } from '../prisma.service'
 import { JwtModule } from '@nestjs/jwt'
 import jwtConfig from './config/jwt.config'
 import { ConfigModule } from '@nestjs/config'
@@ -19,8 +19,8 @@ import { GoogleAuthenticationController } from './authentication/social/google-a
 import { OtpAuthenticationService } from './authentication/otp-authentication.service'
 import { SessionAuthenticationService } from './authentication/session-authentication.service'
 import { SessionAuthenticationController } from './authentication/session-authentication.controller'
-import * as session from 'express-session'
-import * as passport from 'passport'
+import session from 'express-session'
+import passport from 'passport'
 import { UserSerializer } from './authentication/serializers/user-serializer'
 import { Redis } from 'ioredis'
 import RedisStore from 'connect-redis'
@@ -77,7 +77,7 @@ export class IamModule implements NestModule {
 					},
 				}),
 				passport.initialize(),
-				passport.session()
+				passport.session(),
 			)
 			.forRoutes('*')
 	}

@@ -1,5 +1,5 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common'
-import { PrismaService } from 'src/prisma.service'
+import { PrismaService } from '../../prisma.service'
 import { HashingService } from '../hashing/hashing.service'
 import { SignInDto } from './dto/sign-in.dto'
 
@@ -7,7 +7,7 @@ import { SignInDto } from './dto/sign-in.dto'
 export class SessionAuthenticationService {
 	constructor(
 		private readonly prismaService: PrismaService,
-		private readonly hashingService: HashingService
+		private readonly hashingService: HashingService,
 	) {}
 
 	async signIn({ password, email }: SignInDto) {

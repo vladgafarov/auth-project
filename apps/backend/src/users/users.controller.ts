@@ -10,8 +10,8 @@ import {
 import { UsersService } from './users.service'
 import { CreateUserDto } from './dto/create-user.dto'
 import { UpdateUserDto } from './dto/update-user.dto'
-import { ActiveUser } from 'src/iam/decorators/active-user.decorator'
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface'
+import { ActiveUser } from '../iam/decorators/active-user.decorator'
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface'
 
 @Controller('users')
 export class UsersController {

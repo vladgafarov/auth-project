@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { authenticator } from 'otplib'
-import { PrismaService } from 'src/prisma.service'
+import { PrismaService } from '../../prisma.service'
 
 @Injectable()
 export class OtpAuthenticationService {
 	constructor(
 		private readonly configService: ConfigService,
-		private readonly prismaService: PrismaService
+		private readonly prismaService: PrismaService,
 	) {}
 
 	async generateSecret(email: string) {

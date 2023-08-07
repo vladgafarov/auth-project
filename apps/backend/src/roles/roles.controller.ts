@@ -10,8 +10,8 @@ import {
 import { RolesService } from './roles.service'
 import { CreateRoleDto } from './dto/create-role.dto'
 import { UpdateRoleDto } from './dto/update-role.dto'
-import { Roles } from 'src/iam/authorization/decorators/roles.decorator'
-import { Role } from 'src/users/enums/role.enum'
+import { Roles } from '../iam/authorization/decorators/roles.decorator'
+import { Role } from '../users/enums/role.enum'
 
 @Roles(Role.Admin)
 @Controller('roles')

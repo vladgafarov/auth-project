@@ -19,19 +19,21 @@ import { AuthenticationService } from './authentication.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
 import { OtpAuthenticationService } from './otp-authentication.service'
+import { ApiTags } from '@nestjs/swagger'
 
 @Auth(AuthType.None)
+@ApiTags('authentication')
 @Controller('authentication')
 export class AuthenticationController {
 	constructor(
 		private readonly authService: AuthenticationService,
-		private readonly otpAuthService: OtpAuthenticationService
+		private readonly otpAuthService: OtpAuthenticationService,
 	) {}
 
 	@Post('sign-up')
 	async signUp(
 		@Body() signUpDto: SignUpDto,
-		@Res({ passthrough: true }) response: Response
+		@Res({ passthrough: true }) response: Response,
 	) {
 		const tokens = await this.authService.signUp(signUpDto)
 		this.authService.responseJwtInCookie(response, tokens)
@@ -43,7 +45,7 @@ export class AuthenticationController {
 	@Post('sign-in')
 	async signIn(
 		@Res({ passthrough: true }) response: Response,
-		@Body() signInDto: SignInDto
+		@Body() signInDto: SignInDto,
 	) {
 		const tokens = await this.authService.signIn(signInDto)
 		this.authService.responseJwtInCookie(response, tokens)
@@ -55,7 +57,7 @@ export class AuthenticationController {
 	@Post('refresh-tokens')
 	async refreshTokens(
 		@Req() request: Request,
-		@Res({ passthrough: true }) response: Response
+		@Res({ passthrough: true }) response: Response,
 	) {
 		const refreshToken = request.cookies[REFRESH_TOKEN_COOKIE_NAME]
 		if (!refreshToken) {
@@ -73,10 +75,10 @@ export class AuthenticationController {
 	@Post('2fa/generate')
 	async generateQrCode(
 		@ActiveUser() user: ActiveUserData,
-		@Res() response: Response
+		@Res() response: Response,
 	) {
 		const { secret, uri } = await this.otpAuthService.generateSecret(
-			user.email
+			user.email,
 		)
 		await this.otpAuthService.enableTfaForUser(user.email, secret)
 		response.type('png')

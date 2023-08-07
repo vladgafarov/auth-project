@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { OnModuleInit, UnauthorizedException } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { OAuth2Client } from 'google-auth-library'
-import { PrismaService } from 'src/prisma.service'
+import { PrismaService } from '../../../prisma.service'
 import { AuthenticationService } from '../authentication.service'
 
 @Injectable()
@@ -12,7 +12,7 @@ export class GoogleAuthenticationService implements OnModuleInit {
 	constructor(
 		private readonly configService: ConfigService,
 		private readonly authService: AuthenticationService,
-		private readonly prismaService: PrismaService
+		private readonly prismaService: PrismaService,
 	) {}
 
 	onModuleInit() {

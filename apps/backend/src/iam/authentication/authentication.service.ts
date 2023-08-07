@@ -9,7 +9,7 @@ import { JwtService } from '@nestjs/jwt'
 import { Prisma, User } from '@prisma/client'
 import { randomUUID } from 'crypto'
 import { Response } from 'express'
-import { PrismaService } from 'src/prisma.service'
+import { PrismaService } from '../../prisma.service'
 import jwtConfig from '../config/jwt.config'
 import { HashingService } from '../hashing/hashing.service'
 import {
@@ -34,7 +34,7 @@ export class AuthenticationService {
 		@Inject(jwtConfig.KEY)
 		private readonly jwtConfiguration: ConfigType<typeof jwtConfig>,
 		private readonly refreshTokenIdsStorage: RefreshTokenIdsStorage,
-		private readonly otpAuthService: OtpAuthenticationService
+		private readonly otpAuthService: OtpAuthenticationService,
 	) {}
 
 	async signUp({ email, password }: Prisma.UserCreateInput) {
@@ -107,7 +107,7 @@ export class AuthenticationService {
 			})
 			const isValid = await this.refreshTokenIdsStorage.validate(
 				user.id,
-				refreshTokenId
+				refreshTokenId,
 			)
 			if (isValid) {
 				await this.refreshTokenIdsStorage.invalidate(user.id)
@@ -134,7 +134,7 @@ export class AuthenticationService {
 				{
 					email: user.email,
 					roleId: user.roleId,
-				}
+				},
 			),
 			this.signToken(user.id, this.jwtConfiguration.refreshTokenTtl, {
 				refreshTokenId,
@@ -150,7 +150,7 @@ export class AuthenticationService {
 
 	responseJwtInCookie(
 		response: Response,
-		tokens: Awaited<ReturnType<AuthenticationService['generateTokens']>>
+		tokens: Awaited<ReturnType<AuthenticationService['generateTokens']>>,
 	) {
 		response.cookie(ACCESS_TOKEN_COOKIE_NAME, tokens.accessToken, {
 			httpOnly: true,
@@ -178,7 +178,7 @@ export class AuthenticationService {
 				issuer: this.jwtConfiguration.issuer,
 				secret: this.jwtConfiguration.secret,
 				expiresIn,
-			}
+			},
 		)
 	}
 }

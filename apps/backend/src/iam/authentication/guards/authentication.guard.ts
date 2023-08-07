@@ -5,8 +5,8 @@ import {
 	UnauthorizedException,
 } from '@nestjs/common'
 import { Reflector } from '@nestjs/core'
-import { AUTH_TYPE_KEY } from 'src/iam/decorators/auth.decorator'
-import { AuthType } from 'src/iam/enums/auth-type.enum'
+import { AUTH_TYPE_KEY } from '../../decorators/auth.decorator'
+import { AuthType } from '../../enums/auth-type.enum'
 import { AccessTokenGuard } from './access-token.guard'
 import { ApiKeyGuard } from './api-key.guard'
 
@@ -25,20 +25,20 @@ export class AuthenticationGuard implements CanActivate {
 	constructor(
 		private readonly reflector: Reflector,
 		private readonly accessTokenGuard: AccessTokenGuard,
-		private readonly apiKeyGuard: ApiKeyGuard
+		private readonly apiKeyGuard: ApiKeyGuard,
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
 		const authTypes = this.reflector.getAllAndOverride<AuthType[]>(
 			AUTH_TYPE_KEY,
-			[context.getHandler(), context.getClass()]
+			[context.getHandler(), context.getClass()],
 		) ?? [AuthenticationGuard.defaultAuthType]
 		const guards = authTypes.map(type => this.authTypeGuardMap[type]).flat()
 		let error = new UnauthorizedException()
 
 		for (const instance of guards) {
 			const canActivate = await Promise.resolve(
-				instance.canActivate(context)
+				instance.canActivate(context),
 			).catch(err => {
 				error = err
 			})

@@ -4,16 +4,16 @@ import {
 	Injectable,
 	UnauthorizedException,
 } from '@nestjs/common'
-import { REQUEST_USER_KEY } from 'src/iam/iam.constants'
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface'
-import { PrismaService } from 'src/prisma.service'
+import { REQUEST_USER_KEY } from '../../iam.constants'
+import { ActiveUserData } from '../../interfaces/active-user-data.interface'
+import { PrismaService } from '../../../prisma.service'
 import { ApiKeysService } from '../api-keys.service'
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {
 	constructor(
 		private readonly apiKeysService: ApiKeysService,
-		private readonly prismaService: PrismaService
+		private readonly prismaService: PrismaService,
 	) {}
 
 	async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -43,7 +43,7 @@ export class ApiKeyGuard implements CanActivate {
 			}
 			const isValid = await this.apiKeysService.validate(
 				apiKey,
-				apiKeyEntity.key
+				apiKeyEntity.key,
 			)
 			if (!isValid) {
 				throw new Error('Invalid api key')

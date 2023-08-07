@@ -7,15 +7,15 @@ import {
 	Param,
 	Delete,
 } from '@nestjs/common'
-import { Roles } from 'src/iam/authorization/decorators/roles.decorator'
-import { ActiveUser } from 'src/iam/decorators/active-user.decorator'
-import { Auth } from 'src/iam/decorators/auth.decorator'
-import { AuthType } from 'src/iam/enums/auth-type.enum'
-import { ActiveUserData } from 'src/iam/interfaces/active-user-data.interface'
-import { Role } from 'src/users/enums/role.enum'
+import { Roles } from '../iam/authorization/decorators/roles.decorator'
+import { Auth } from '../iam/decorators/auth.decorator'
+import { AuthType } from '../iam/enums/auth-type.enum'
+import { ActiveUserData } from '../iam/interfaces/active-user-data.interface'
+import { Role } from '../users/enums/role.enum'
 import { CoffeesService } from './coffees.service'
 import { CreateCoffeeDto } from './dto/create-coffee.dto'
 import { UpdateCoffeeDto } from './dto/update-coffee.dto'
+import { ActiveUser } from '../iam/decorators/active-user.decorator'
 
 //@Roles(Role.Admin)
 @Auth(AuthType.None)
