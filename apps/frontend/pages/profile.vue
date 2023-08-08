@@ -13,6 +13,10 @@ useHead({
 	<div :class="container({ pt: '20' })">
 		<h1>Profile</h1>
 
+		<div>
+			{{ data?.email }}
+		</div>
+
 		<button @click="refresh()" :class="button()">refresh</button>
 	</div>
 </template>

@@ -29,9 +29,15 @@ const submit = handleSubmit(() => {
 	execute()
 })
 
-const { execute, status, error } = await AuthService.signUp({
+const { execute, status, error, data } = await AuthService.signUp({
 	email: email.value,
 	password: password.value,
+})
+
+watch(data, async newData => {
+	if (newData) {
+		await navigateTo('/profile')
+	}
 })
 </script>
 

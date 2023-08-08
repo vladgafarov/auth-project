@@ -10,7 +10,7 @@ const schema = toTypedSchema(
 	z.object({
 		email: z.string().email(),
 		password: z.string().min(6),
-	})
+	}),
 )
 const { handleSubmit } = useForm({
 	validationSchema: schema,
@@ -23,9 +23,15 @@ const submit = handleSubmit(() => {
 	execute()
 })
 
-const { execute, status, error } = await AuthService.signIn({
+const { execute, status, error, data } = await AuthService.signIn({
 	email: email.value,
 	password: password.value,
+})
+
+watch(data, async newData => {
+	if (newData) {
+		await navigateTo('/profile')
+	}
 })
 </script>
 

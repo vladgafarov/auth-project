@@ -5,11 +5,17 @@ export const useApiFetch: typeof useFetch = (url, options) => {
 		baseURL: config.public.baseURL,
 		credentials: 'include',
 		async onResponseError(context) {
-			if (context.response.status === 401) {
-				await AuthService.refreshTokens()
-				await $fetch(context.request, {
-					credentials: 'include',
-				})
+			if (
+				context.response.status === 401 &&
+				!context.request.toString().includes('sign')
+			) {
+				const res = await AuthService.refreshTokens()
+				if (res) {
+					await $fetch(context.request, {
+						method: context.options?.method || 'get',
+						credentials: 'include',
+					})
+				}
 			}
 
 			const err = context.response._data?.message

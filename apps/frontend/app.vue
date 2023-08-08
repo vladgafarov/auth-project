@@ -1,9 +1,7 @@
 <template>
 	<div style="height: 100%">
-		<VApp>
-			<NuxtLayout>
-				<NuxtPage />
-			</NuxtLayout>
-		</VApp>
+		<NuxtLayout>
+			<NuxtPage />
+		</NuxtLayout>
 	</div>
 </template>

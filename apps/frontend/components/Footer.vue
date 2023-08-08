@@ -1,3 +1,7 @@
+<script setup>
+import { css } from 'styled-system/css'
+</script>
+
 <template>
-	<VFooter class="bg-slate-300">Coffee shop</VFooter>
+	<footer :class="css({ bg: 'slate.300' })">Coffee shop</footer>
 </template>
