@@ -3,6 +3,7 @@ import { css } from 'styled-system/css'
 import { flex } from 'styled-system/patterns'
 
 const isLoggedIn = ref(false)
+const auth = useAuth()
 
 function toggleIsLoggedIn() {
 	isLoggedIn.value = !isLoggedIn.value
@@ -39,6 +40,7 @@ function toggleIsLoggedIn() {
 		<div :class="flex({ gap: '4' })">
 			<NuxtLink to="/menu">Menu</NuxtLink>
 			<NuxtLink to="/profile">Profile</NuxtLink>
+			<!-- <NuxtLink to="/profile" v-if="auth.authenticated">Log out</NuxtLink> -->
 			<NuxtLink to="/login">Login</NuxtLink>
 		</div>
 	</header>

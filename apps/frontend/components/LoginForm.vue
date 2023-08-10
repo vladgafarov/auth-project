@@ -19,6 +19,8 @@ const { handleSubmit } = useForm({
 const email = useField<string>('email')
 const password = useField<string>('password')
 
+const auth = useAuth()
+
 const submit = handleSubmit(() => {
 	execute()
 })
@@ -30,6 +32,7 @@ const { execute, status, error, data } = await AuthService.signIn({
 
 watch(data, async newData => {
 	if (newData) {
+		auth.value.authenticated = true
 		await navigateTo('/profile')
 	}
 })

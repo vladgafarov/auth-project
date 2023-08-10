@@ -45,6 +45,20 @@ export class AuthService extends ApiService {
 		})
 	}
 
+	static async signInGoogle({ token }: { token: Ref<string> }) {
+		return useApiFetch<{
+			accessToken: string
+			refreshToken: string
+		}>(this.url('/google'), {
+			method: 'POST',
+			body: {
+				token,
+			},
+			immediate: false,
+			watch: false,
+		})
+	}
+
 	static async signOut() {
 		return useApiFetch(this.url('/sign-out'), {
 			method: 'POST',

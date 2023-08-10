@@ -7,9 +7,11 @@ const activeForm = ref<'login' | 'signup'>('login')
 
 useHead({
 	title: 'Login',
+	script: [{ src: 'https://accounts.google.com/gsi/client', async: true }],
 })
 definePageMeta({
 	layout: false,
+	middleware: ['auth'],
 })
 </script>
 
@@ -40,15 +42,21 @@ definePageMeta({
 		>
 			<div :class="flex({ direction: 'column', gap: '4' })">
 				<div :class="flex()">
-					<NuxtLink to="/">
-						<button :class="button({ visual: 'ghost', size: 'sm' })">
-							Back home
-						</button>
-					</NuxtLink>
+					<NuxtLink to="/"> Back home </NuxtLink>
 				</div>
 
 				<LoginForm v-if="activeForm === 'login'" />
 				<SignupForm v-else />
+
+				<div :class="grid({ columns: 2 })">
+					<!-- <button :class="button({ visual: 'outline' })">
+						Login with Google
+					</button> -->
+					<GoogleAuth />
+					<button :class="button({ visual: 'outline' })">
+						Login with passkey
+					</button>
+				</div>
 
 				<p
 					v-if="activeForm === 'login'"

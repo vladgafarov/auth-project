@@ -7,6 +7,9 @@ const { data, refresh } = await ProfileService.getProfile()
 useHead({
 	title: 'Profile',
 })
+definePageMeta({
+	middleware: ['auth'],
+})
 </script>
 
 <template>
