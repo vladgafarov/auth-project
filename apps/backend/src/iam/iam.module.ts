@@ -23,12 +23,16 @@ import session from 'express-session'
 import passport from 'passport'
 import { UserSerializer } from './authentication/serializers/user-serializer'
 import { Redis } from 'ioredis'
+import { WebauthnService } from './authentication/webauthn/webauthn.service'
 import RedisStore from 'connect-redis'
+import { UsersModule } from '../users/users.module'
+import { UsersService } from '../users/users.service'
 
 @Module({
 	imports: [
 		JwtModule.registerAsync(jwtConfig.asProvider()),
 		ConfigModule.forFeature(jwtConfig),
+		UsersModule,
 	],
 	providers: [
 		{
@@ -53,6 +57,8 @@ import RedisStore from 'connect-redis'
 		OtpAuthenticationService,
 		SessionAuthenticationService,
 		UserSerializer,
+		WebauthnService,
+		UsersService,
 	],
 	controllers: [
 		AuthenticationController,

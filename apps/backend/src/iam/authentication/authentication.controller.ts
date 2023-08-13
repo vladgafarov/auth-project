@@ -8,6 +8,7 @@ import {
 	Req,
 	Res,
 } from '@nestjs/common'
+import { ApiTags } from '@nestjs/swagger'
 import { Request, Response } from 'express'
 import { toFileStream } from 'qrcode'
 import { ActiveUser } from '../decorators/active-user.decorator'
@@ -18,8 +19,9 @@ import { ActiveUserData } from '../interfaces/active-user-data.interface'
 import { AuthenticationService } from './authentication.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
+import { WebauthnRegistrationOptionsDto } from './dto/webauthn-registration-options.dto'
 import { OtpAuthenticationService } from './otp-authentication.service'
-import { ApiTags } from '@nestjs/swagger'
+import { WebauthnService } from './webauthn/webauthn.service'
 
 @Auth(AuthType.None)
 @ApiTags('authentication')
@@ -28,6 +30,7 @@ export class AuthenticationController {
 	constructor(
 		private readonly authService: AuthenticationService,
 		private readonly otpAuthService: OtpAuthenticationService,
+		private readonly webauthnService: WebauthnService,
 	) {}
 
 	@Post('sign-up')
@@ -83,6 +86,14 @@ export class AuthenticationController {
 		await this.otpAuthService.enableTfaForUser(user.email, secret)
 		response.type('png')
 		return toFileStream(response, uri)
+	}
+
+	@Post('webauthn-registration-options')
+	@HttpCode(HttpStatus.OK)
+	async webauthnRegistrationOptions(
+		@Body() dto: WebauthnRegistrationOptionsDto,
+	) {
+		return this.webauthnService.registrationOptions(dto)
 	}
 
 	@Auth(AuthType.Bearer)
