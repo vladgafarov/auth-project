@@ -12,25 +12,45 @@ export class UsersService {
 		credentialID,
 		credentialPublicKey,
 		userId,
+		transports,
 	}: {
 		credentialID: string
 		credentialPublicKey: Uint8Array
 		counter: number
 		userId: number
+		transports?: string[]
 	}) {
 		try {
-			const device = await this.prismaService.webauthnDevice.create({
+			const device = await this.prismaService.webauthnDevice.findUnique({
+				where: {
+					credentialID,
+				},
+			})
+
+			if (device) {
+				return this.prismaService.webauthnDevice.update({
+					where: {
+						credentialID,
+					},
+					data: {
+						counter,
+					},
+				})
+			}
+
+			const newDevice = await this.prismaService.webauthnDevice.create({
 				data: {
 					credentialID,
 					credentialPublicKey: Buffer.from(credentialPublicKey),
 					counter,
 					userId,
+					transports,
 				},
 			})
 
-			return device
+			return newDevice
 		} catch (error) {
-			throw new BadRequestException('Cannot add device')
+			throw new BadRequestException('Cannot add device ', error.message)
 		}
 	}
 
