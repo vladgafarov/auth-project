@@ -20,8 +20,11 @@ import { AuthenticationService } from './authentication.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
 import { WebauthnRegistrationOptionsDto } from './dto/webauthn-registration-options.dto'
+import { WebauthnRegistrationVerificationDto } from './dto/webauthn-registration-verification.dto'
 import { OtpAuthenticationService } from './otp-authentication.service'
 import { WebauthnService } from './webauthn/webauthn.service'
+import { WebauthnLoginOptionsDto } from './dto/webauthn-login-options.dto'
+import { WebauthnLoginVerificationDto } from './dto/webauthn-login-verification.dto'
 
 @Auth(AuthType.None)
 @ApiTags('authentication')
@@ -94,6 +97,26 @@ export class AuthenticationController {
 		@Body() dto: WebauthnRegistrationOptionsDto,
 	) {
 		return this.webauthnService.registrationOptions(dto)
+	}
+
+	@Post('webauthn-registration-verification')
+	@HttpCode(HttpStatus.OK)
+	async webauthnRegistrationVerification(
+		@Body() dto: WebauthnRegistrationVerificationDto,
+	) {
+		return this.webauthnService.registrationVerification(dto)
+	}
+
+	@Post('webauthn-registration-verification')
+	@HttpCode(HttpStatus.OK)
+	async webauthnLoginOptions(@Body() dto: WebauthnLoginOptionsDto) {
+		return this.webauthnService.loginOptions(dto)
+	}
+
+	@Post('webauthn-registration-verification')
+	@HttpCode(HttpStatus.OK)
+	async webauthnLoginVerification(@Body() dto: WebauthnLoginVerificationDto) {
+		return this.webauthnService.loginVerification(dto)
 	}
 
 	@Auth(AuthType.Bearer)
