@@ -80,4 +80,52 @@ export class AuthService extends ApiService {
 			credentials: 'include',
 		})
 	}
+
+	static async webauthnRegistrationOptions(email: string) {
+		const config = useRuntimeConfig()
+
+		return $fetch(this.url('/webauthn-registration-options'), {
+			method: 'POST',
+			body: {
+				email,
+			},
+			retry: 3,
+			baseURL: config.public.baseURL,
+			credentials: 'include',
+		})
+	}
+
+	static async webauthnRegistrationVerification(attResp: any) {
+		const config = useRuntimeConfig()
+
+		return $fetch(this.url('/webauthn-registration-verification'), {
+			method: 'POST',
+			body: JSON.stringify(attResp),
+			retry: 3,
+			baseURL: config.public.baseURL,
+			credentials: 'include',
+		})
+	}
+
+	static async webauthnLoginOptions() {
+		const config = useRuntimeConfig()
+
+		return $fetch(this.url('/webauthn-login-options'), {
+			method: 'GET',
+			retry: 3,
+			baseURL: config.public.baseURL,
+		})
+	}
+
+	static async webauthnLoginVerification(attResp: any) {
+		const config = useRuntimeConfig()
+
+		return $fetch(this.url('/webauthn-login-verification'), {
+			method: 'POST',
+			body: JSON.stringify(attResp),
+			retry: 3,
+			baseURL: config.public.baseURL,
+			credentials: 'include',
+		})
+	}
 }

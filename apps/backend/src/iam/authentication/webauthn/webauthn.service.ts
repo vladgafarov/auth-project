@@ -9,17 +9,18 @@ import {
 } from '@simplewebauthn/server'
 import { PrismaService } from '../../../prisma.service'
 import { UsersService } from '../../../users/users.service'
+import { AuthenticationService } from '../authentication.service'
+import { WebauthnLoginVerificationDto } from '../dto/webauthn-login-verification.dto'
 import { WebauthnRegistrationOptionsDto } from '../dto/webauthn-registration-options.dto'
 import { WebauthnRegistrationVerificationDto } from '../dto/webauthn-registration-verification.dto'
 import { origin, rpID, rpName } from './webauthn.constansts'
-import { WebauthnLoginOptionsDto } from '../dto/webauthn-login-options.dto'
-import { WebauthnLoginVerificationDto } from '../dto/webauthn-login-verification.dto'
 
 @Injectable()
 export class WebauthnService {
 	constructor(
 		private readonly prismaService: PrismaService,
 		private readonly usersService: UsersService,
+		private readonly authService: AuthenticationService,
 	) {}
 
 	async registrationOptions(dto: WebauthnRegistrationOptionsDto) {
@@ -48,6 +49,10 @@ export class WebauthnService {
 				id: Buffer.from(authenticator.credentialID, 'base64'),
 				type: 'public-key',
 			})),
+			authenticatorSelection: {
+				residentKey: 'required',
+				userVerification: 'preferred',
+			},
 		})
 
 		// TODO: redis
@@ -97,7 +102,9 @@ export class WebauthnService {
 
 		await this.usersService.addWebauthnDevice({
 			counter: registrationInfo.counter,
-			credentialID: registrationInfo.credentialID.toString(),
+			credentialID: Buffer.from(registrationInfo.credentialID).toString(
+				'base64url',
+			),
 			credentialPublicKey: registrationInfo.credentialPublicKey,
 			userId: user.id,
 			transports: credential.response.transports,
@@ -106,50 +113,21 @@ export class WebauthnService {
 		return { verified }
 	}
 
-	async loginOptions(dto: WebauthnLoginOptionsDto) {
-		const user = await this.prismaService.user.findUnique({
-			where: { email: dto.email },
-			include: {
-				webauthnDevices: true,
-			},
-		})
-		if (!user) {
-			throw new BadRequestException('User no found')
-		}
-
+	async loginOptions() {
 		const loginOptions = generateAuthenticationOptions({
-			allowCredentials: user.webauthnDevices.map(authenticator => ({
-				id: Buffer.from(authenticator.credentialID, 'base64'),
-				type: 'public-key',
-				// transports: authenticator.transports,
-			})),
 			userVerification: 'preferred',
-		})
-
-		await this.prismaService.user.update({
-			where: { email: dto.email },
-			data: { currentWebauthnChallenge: loginOptions.challenge },
 		})
 
 		return loginOptions
 	}
 
 	async loginVerification(dto: WebauthnLoginVerificationDto) {
-		const { email, ...response } = dto
-
-		const user = await this.prismaService.user.findUnique({
-			where: { email: email },
-			include: {
-				webauthnDevices: true,
-			},
-		})
-		if (!user) {
-			throw new BadRequestException('User not found')
-		}
-
 		const authenticator = await this.prismaService.webauthnDevice.findUnique({
 			where: {
-				credentialID: response.id,
+				credentialID: dto.id,
+			},
+			include: {
+				user: true,
 			},
 		})
 		if (!authenticator) {
@@ -160,8 +138,8 @@ export class WebauthnService {
 
 		try {
 			verification = await verifyAuthenticationResponse({
-				response,
-				expectedChallenge: user.currentWebauthnChallenge,
+				response: dto,
+				expectedChallenge: dto.challenge,
 				expectedOrigin: origin,
 				expectedRPID: rpID,
 				authenticator: {
@@ -170,6 +148,7 @@ export class WebauthnService {
 					transports: authenticator.transports,
 					credentialID: Buffer.from(authenticator.credentialID, 'base64'),
 				},
+				requireUserVerification: true,
 			})
 		} catch (error) {
 			throw new BadRequestException(error.message)
@@ -179,13 +158,13 @@ export class WebauthnService {
 
 		if (verified) {
 			await this.prismaService.webauthnDevice.update({
-				where: { credentialID: response.id },
+				where: { credentialID: dto.id },
 				data: {
 					counter: authenticationInfo.newCounter,
 				},
 			})
 		}
 
-		return { verified }
+		return this.authService.generateTokens(authenticator.user)
 	}
 }

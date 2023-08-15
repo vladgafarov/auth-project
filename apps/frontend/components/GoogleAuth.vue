@@ -11,7 +11,7 @@ function handleGoogleRes(data) {
 }
 
 onMounted(() => {
-	if (!google) throw new Error('no google oauth')
+	if (!window?.google) throw new Error('no google oauth')
 
 	google.accounts.id.initialize({
 		client_id:

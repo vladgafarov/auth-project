@@ -1,8 +1,10 @@
-import { IsEmail, IsEnum, IsString } from 'class-validator'
+import { IsEmail, IsEnum, IsOptional, IsString } from 'class-validator'
 
 export class WebauthnLoginVerificationDto {
-	@IsEmail()
-	email: string
+	// @IsEmail()
+	// email: string
+	@IsString()
+	challenge: string
 
 	@IsString()
 	id: string
@@ -13,6 +15,7 @@ export class WebauthnLoginVerificationDto {
 	@IsEnum(['public-key'])
 	type: 'public-key'
 
+	@IsOptional()
 	@IsEnum(['cross-platform', 'platform'])
 	authenticatorAttachment?: 'cross-platform' | 'platform'
 

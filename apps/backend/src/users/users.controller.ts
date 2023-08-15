@@ -31,7 +31,7 @@ export class UsersController {
 
 	@Get('me')
 	me(@ActiveUser() user: ActiveUserData) {
-		return user
+		return this.usersService.me(user.sub)
 	}
 
 	@Get(':id')

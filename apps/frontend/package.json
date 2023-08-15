@@ -22,6 +22,7 @@
 	},
 	"dependencies": {
 		"@mdi/font": "^7.2.96",
+		"@simplewebauthn/browser": "^7.4.0",
 		"@vee-validate/zod": "^4.10.6",
 		"sass": "^1.63.6",
 		"vee-validate": "^4.10.3",

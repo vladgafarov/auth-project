@@ -7,6 +7,23 @@ import { UpdateUserDto } from './dto/update-user.dto'
 export class UsersService {
 	constructor(private readonly prismaService: PrismaService) {}
 
+	async me(userId: number) {
+		try {
+			const user = await this.prismaService.user.findUnique({
+				where: {
+					id: userId,
+				},
+				include: {
+					webauthnDevices: true,
+				},
+			})
+
+			return user
+		} catch (error) {
+			throw new BadRequestException('Cannot get user ', error.message)
+		}
+	}
+
 	async addWebauthnDevice({
 		counter,
 		credentialID,

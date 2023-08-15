@@ -45,17 +45,16 @@ definePageMeta({
 					<NuxtLink to="/"> Back home </NuxtLink>
 				</div>
 
+				<NuxtErrorBoundary>
+					<template #error="{ error }"> Error: {{ error }} </template>
+				</NuxtErrorBoundary>
+
 				<LoginForm v-if="activeForm === 'login'" />
 				<SignupForm v-else />
 
 				<div :class="grid({ columns: 2 })">
-					<!-- <button :class="button({ visual: 'outline' })">
-						Login with Google
-					</button> -->
 					<GoogleAuth />
-					<button :class="button({ visual: 'outline' })">
-						Login with passkey
-					</button>
+					<WebauthnLogin />
 				</div>
 
 				<p

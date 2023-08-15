@@ -2,6 +2,7 @@ import {
 	BadRequestException,
 	Body,
 	Controller,
+	Get,
 	HttpCode,
 	HttpStatus,
 	Post,
@@ -19,12 +20,11 @@ import { ActiveUserData } from '../interfaces/active-user-data.interface'
 import { AuthenticationService } from './authentication.service'
 import { SignInDto } from './dto/sign-in.dto'
 import { SignUpDto } from './dto/sign-up.dto'
+import { WebauthnLoginVerificationDto } from './dto/webauthn-login-verification.dto'
 import { WebauthnRegistrationOptionsDto } from './dto/webauthn-registration-options.dto'
 import { WebauthnRegistrationVerificationDto } from './dto/webauthn-registration-verification.dto'
 import { OtpAuthenticationService } from './otp-authentication.service'
 import { WebauthnService } from './webauthn/webauthn.service'
-import { WebauthnLoginOptionsDto } from './dto/webauthn-login-options.dto'
-import { WebauthnLoginVerificationDto } from './dto/webauthn-login-verification.dto'
 
 @Auth(AuthType.None)
 @ApiTags('authentication')
@@ -107,16 +107,21 @@ export class AuthenticationController {
 		return this.webauthnService.registrationVerification(dto)
 	}
 
-	@Post('webauthn-registration-verification')
-	@HttpCode(HttpStatus.OK)
-	async webauthnLoginOptions(@Body() dto: WebauthnLoginOptionsDto) {
-		return this.webauthnService.loginOptions(dto)
+	@Get('webauthn-login-options')
+	async webauthnLoginOptions() {
+		return this.webauthnService.loginOptions()
 	}
 
-	@Post('webauthn-registration-verification')
+	@Post('webauthn-login-verification')
 	@HttpCode(HttpStatus.OK)
-	async webauthnLoginVerification(@Body() dto: WebauthnLoginVerificationDto) {
-		return this.webauthnService.loginVerification(dto)
+	async webauthnLoginVerification(
+		@Body() dto: WebauthnLoginVerificationDto,
+		@Res({ passthrough: true }) response: Response,
+	) {
+		const tokens = await this.webauthnService.loginVerification(dto)
+		this.authService.responseJwtInCookie(response, tokens)
+
+		return tokens
 	}
 
 	@Auth(AuthType.Bearer)
